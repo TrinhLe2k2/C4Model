@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Queues and topics | C4 model</title>
+  <meta name="description" content="The C4 model for visualising software architecture (official website)">
+  <link rel="canonical" href="https://c4model.com/abstractions/queues-and-topics">
+  <!-- Original publisher theme. Internet is required for these external theme files. -->
+  <link id="c4-original-theme" rel="stylesheet" href="https://c4model.com/assets/css/just-the-docs-default.css">
+  <!-- This CSS is copied verbatim from the uploaded _sass/custom/custom.scss. -->
+  <style>html {
+  scroll-behavior: auto;
+}</style>
+  <script id="c4-local-search-data" src="../assets/local-search-data.js"></script>
+  <script src="../assets/file-open-compat.js"></script>
+  <script src="https://c4model.com/assets/js/vendor/lunr.min.js"></script>
+  <script src="https://c4model.com/assets/js/just-the-docs.js"></script>
+</head>
+<body>
+  <a class="skip-to-main" href="#main-content">Skip to main content</a>
+  <svg xmlns="http://www.w3.org/2000/svg" style="display: none;" aria-hidden="true">
+  <symbol id="svg-link" viewBox="0 0 24 24"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></symbol>
+  <symbol id="svg-search" viewBox="0 0 24 24"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg></symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></symbol>
+  <symbol id="svg-external-link" viewBox="0 0 24 24"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6"></path><path d="M10 14L21 3"></path><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path></svg></symbol>
+  <symbol id="svg-doc" viewBox="0 0 24 24"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline></svg></symbol>
+</svg>
+  <div class="side-bar">
+    <div class="site-header" role="banner">
+      <a href="../index.html" class="site-title lh-tight">C4 model</a>
+      <button id="menu-button" class="site-button btn-reset" aria-label="Toggle menu" aria-pressed="false"><svg viewBox="0 0 24 24" class="icon" aria-hidden="true"><use xlink:href="#svg-menu"></use></svg></button>
+    </div>
+    <nav aria-label="Main" id="site-nav" class="site-nav">
+      <ul class="nav-list">
+<li class="nav-list-item"><a href="../index.html" class="nav-list-link">Home</a></li>
+<li class="nav-list-item"><a href="../introduction.html" class="nav-list-link">Introduction</a></li>
+<li class="nav-list-item"><a href="../history.html" class="nav-list-link">History</a></li>
+<li class="nav-list-item active"><button class="nav-list-expander btn-reset" aria-label="Toggle Abstractions" aria-expanded="true"><svg viewBox="0 0 24 24" class="icon" aria-hidden="true"><use xlink:href="#svg-arrow-right"></use></svg></button><a href="index.html" class="nav-list-link">Abstractions</a><ul class="nav-list"><li class="nav-list-item"><a href="software-system.html" class="nav-list-link">1. Software system</a></li>
+<li class="nav-list-item"><a href="container.html" class="nav-list-link">2. Container</a></li>
+<li class="nav-list-item"><a href="component.html" class="nav-list-link">3. Component</a></li>
+<li class="nav-list-item"><a href="code.html" class="nav-list-link">4. Code</a></li>
+<li class="nav-list-item"><a href="microservices.html" class="nav-list-link">Microservices</a></li>
+<li class="nav-list-item active"><a href="queues-and-topics.html" class="nav-list-link active" aria-current="page">Queues and topics</a></li>
+<li class="nav-list-item"><a href="faq.html" class="nav-list-link">FAQ</a></li></ul></li>
+<li class="nav-list-item"><button class="nav-list-expander btn-reset" aria-label="Toggle Diagrams" aria-expanded="false"><svg viewBox="0 0 24 24" class="icon" aria-hidden="true"><use xlink:href="#svg-arrow-right"></use></svg></button><a href="../diagrams/index.html" class="nav-list-link">Diagrams</a><ul class="nav-list"><li class="nav-list-item"><a href="../diagrams/system-context.html" class="nav-list-link">1. System context diagram</a></li>
+<li class="nav-list-item"><a href="../diagrams/container.html" class="nav-list-link">2. Container diagram</a></li>
+<li class="nav-list-item"><a href="../diagrams/component.html" class="nav-list-link">3. Component diagram</a></li>
+<li class="nav-list-item"><a href="../diagrams/code.html" class="nav-list-link">4. Code diagram</a></li>
+<li class="nav-list-item"><a href="../diagrams/system-landscape.html" class="nav-list-link">System landscape diagram</a></li>
+<li class="nav-list-item"><a href="../diagrams/dynamic.html" class="nav-list-link">Dynamic diagram</a></li>
+<li class="nav-list-item"><a href="../diagrams/deployment.html" class="nav-list-link">Deployment diagram</a></li>
+<li class="nav-list-item"><a href="../diagrams/notation.html" class="nav-list-link">Notation</a></li>
+<li class="nav-list-item"><a href="../diagrams/checklist.html" class="nav-list-link">Review checklist</a></li>
+<li class="nav-list-item"><a href="../diagrams/faq.html" class="nav-list-link">FAQ</a></li></ul></li>
+<li class="nav-list-item"><a href="../tooling/index.html" class="nav-list-link">Tooling</a></li>
+<li class="nav-list-item"><a href="../faq.html" class="nav-list-link">FAQ</a></li>
+<li class="nav-list-item external"><a href="../example/index.html" class="nav-list-link external">Interactive example<svg viewBox="0 0 24 24" class="icon icon-external" aria-hidden="true"><use xlink:href="#svg-external-link"></use></svg></a></li>
+<li class="nav-list-item external"><a href="https://www.oreilly.com/library/view/the-c4-model/9798341660113/" class="nav-list-link external">Book<svg viewBox="0 0 24 24" class="icon icon-external" aria-hidden="true"><use xlink:href="#svg-external-link"></use></svg></a></li>
+<li class="nav-list-item external"><a href="https://www.youtube.com/watch?v=x2-rSnhpw0g" class="nav-list-link external">Video<svg viewBox="0 0 24 24" class="icon icon-external" aria-hidden="true"><use xlink:href="#svg-external-link"></use></svg></a></li>
+<li class="nav-list-item external"><a href="https://simonbrown.je/workshops" class="nav-list-link external">Training &amp; workshops<svg viewBox="0 0 24 24" class="icon icon-external" aria-hidden="true"><use xlink:href="#svg-external-link"></use></svg></a></li>
+<li class="nav-list-item external"><a href="https://www.patreon.com/c4model" class="nav-list-link external">Patreon &amp; Discord<svg viewBox="0 0 24 24" class="icon icon-external" aria-hidden="true"><use xlink:href="#svg-external-link"></use></svg></a></li>
+      </ul>
+    </nav>
+<footer class="site-footer">
+    This website and example diagrams are licensed under a
+    <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank">Creative Commons Attribution 4.0 International License</a>.
+</footer>
+
+  </div>
+  <div class="main" id="top">
+    <div id="main-header" class="main-header">
+      <div class="search">
+        <div class="search-input-wrap">
+          <input type="text" id="search-input" class="search-input" tabindex="0" placeholder="Search C4 model" aria-label="Search C4 model" autocomplete="off">
+          <label for="search-input" class="search-label"><svg viewBox="0 0 24 24" class="search-icon" aria-hidden="true"><use xlink:href="#svg-search"></use></svg></label>
+        </div>
+        <div id="search-results" class="search-results"></div>
+      </div>
+    </div>
+    <div class="main-content-wrap">
+      <div id="main-content" class="main-content">
+        <main>
+<h1 id="queues-and-topics"><a href="#queues-and-topics" class="anchor-heading" aria-labelledby="queues-and-topics"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a>Queues and topics</h1>
+<p>Imagine that we have a service-based architecture, where a number of services (A and B) produce messages,
+and a number of other services (C &amp; D) consume messages.
+A common way to diagram such an architecture is like this:</p>
+<p><a href="../images/queues-and-topics/1.png"><img src="../images/queues-and-topics/1.png" alt=""></a></p>
+<p>From some points of view, this diagram is a true and accurate representation of the architecture.
+Services A and B are sending messages to an intermediary, which is forwarding those messages on to services C and D.
+The problem is that the “hub and spoke” nature of this diagram tends to obscure the real story, where a
+degree of coupling may exist between the message producers and consumers.</p>
+<h2 id="point-to-point"><a href="#point-to-point" class="anchor-heading" aria-labelledby="point-to-point"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a>Point-to-point</h2>
+<p>The problem here is being caused by us representing the message bus as a C4 container, which arguably isn’t correct.
+A better approach is to think about each separate queue and topic as being a “data store”.
+A message queue is essentially a <strong>data store</strong> - it’s a bucket for storing data (messages),
+with producers adding data, and consumers taking it away.
+The implication here is that the queues and topics are C4 containers, rather than the message bus itself.</p>
+<p><a href="../images/queues-and-topics/2.png"><img src="../images/queues-and-topics/2.png" alt=""></a></p>
+<p>In this example, we can clearly see there’s a coupling between services A and C via a queue named X,
+and there’s a similar point-to-point coupling between services B and D via a queue named Y.</p>
+<p>Modelling queues and topics as C4 containers also provides a way to think about them independently of their
+deployment topology. At development time, you might have all queues and topics running on a single instance of a message
+bus to save resources on your laptop. The live deployment topology might see individual queues and topics deployed
+to separate message buses, brokers, or clusters for performance, scalability, or security reasons.</p>
+<p>If you genuinely have a point-to-point coupling via a queue, you could further simplify this diagram by omitting
+the queues, and moving the queue names to the arrows instead.</p>
+<p><a href="../images/queues-and-topics/3.png"><img src="../images/queues-and-topics/3.png" alt=""></a></p>
+<p>The result is a visually simpler and less cluttered diagram, but the queues are no
+longer as explicitly evident on the diagram. Since the C4 model is notation independent, you could additionally use a
+different line style (solid vs dashed) or colour to highlight message-based relationships vs API calls, for example.
+Neither version of the diagrams is “better” than the other, they are just telling the same story in a different way.
+It’s all trade-offs.</p>
+<h2 id="pubsub"><a href="#pubsub" class="anchor-heading" aria-labelledby="pubsub"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a>Pub/sub</h2>
+<p>You’ll notice that all diagrams have shown messages flowing from the left of the diagram to the right,
+with the arrows labelled as “Sends messages to”. Although this works well, particularly for point-to-point and
+queue-based architectures, you can also change the arrow directions to better highlight something
+more pub/sub or topic-based.</p>
+<p><a href="../images/queues-and-topics/4.png"><img src="../images/queues-and-topics/4.png" alt=""></a></p>
+<p>This version of the diagram better shows the roles of the message publishers and subscribers. Again, it’s just a
+different way of telling the same story.</p>
+<h2 id="summary"><a href="#summary" class="anchor-heading" aria-labelledby="summary"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a>Summary</h2>
+<p>There are a number of ways to diagram message-based architectures, with the latter two of the following being “correct”:</p>
+<ul>
+<li>Incorrect: Model the message bus as a C4 container.</li>
+<li>Correct: Explicitly model queues and topics as C4 containers.</li>
+<li>Correct: Implicitly model message-based interactions using a “via” notation on relationships.</li>
+</ul>
+<h2 id="further-considerations"><a href="#further-considerations" class="anchor-heading" aria-labelledby="further-considerations"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a>Further considerations</h2>
+<p>The examples presented have assumed that a single software system is comprised from a number of services communicating
+via queues and topics. In other words, everything on the diagram sits “inside” the software system boundary, and is
+“owned” by that single software system.</p>
+<p>If you’ve read the <a href="microservices.html">microservices</a> recommendations and you’re modelling each
+service as a separate software system, you additionally need to consider who “owns” the queues and topics.
+If service A (a software system) has a point-to-point relationship with service B (also a software system)
+via a queue named X (a container) … who owns the container? Does service A own the definition of the message format
+and operation of the queue, or is it service B? Or perhaps it’s jointly owned, or owned by somebody else entirely.
+Ownership will impact the diagrams.</p>
+
+        </main>
+        <hr>
+        <footer>
+<script src="https://simonbrown.je/js/ad.js"></script>
+<script>
+    showAd('main-content', 'c4model');
+</script>
+        </footer>
+      </div>
+    </div>
+    <div class="search-overlay"></div>
+  </div>
+</body>
+</html>
