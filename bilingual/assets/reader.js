@@ -36,7 +36,11 @@
   state.rate = [0.75,1,1.25].includes(Number(state.rate)) ? Number(state.rate) : 1;
   state.hints = Math.max(0, Number(state.hints) || 0);
   let currentPage = null, enGroups = [], viGroups = [], nodeGroups = new WeakMap(), active = null;
-  let pinned = false, revealed = new Set(), saveTimer = 0, toastTimer = 0, syncFrame = 0, syncTarget = null, syncUntil = 0;
+  let pinned = false, revealed = new Set(), saveTimer = 0, toastTimer = 0, syncFrame = 0;
+  let scrollLeader = enPane, pendingSource = null, geometry = null, layoutFrame = 0;
+  const scrollWrites = new WeakMap();
+  const SCROLL_INSET = 40; // Match the same reading line in both columns.
+
   let libraryTab = 'saved', reviewIndex = 0, reviewFlipped = false, lastPointer = null, pointerFrame = 0;
   let validationErrors = [], currentPairs = 0;
 
@@ -180,12 +184,14 @@
     $('rr-complete').textContent=state.completed.includes(page.path)?'✓ Đã đánh dấu đọc':'Đánh dấu đã đọc';
     $('rr-complete').setAttribute('aria-pressed',String(state.completed.includes(page.path)));
     updateNav();setMode(state.mode,false);updateSelection();
-    enPane.scrollTop=0;viPane.scrollTop=0;
+    invalidateGeometry();
+    scrollLeader=enPane;
+    setPaneScroll(enPane,0);setPaneScroll(viPane,0);
     requestAnimationFrame(()=>{
       if (anchor) scrollToAnchor(anchor);
       else {
         const y=Number(state.positions[page.path])||0;
-        enPane.scrollTop=y;
+        setPaneScroll(enPane,y);
         if (state.sync) syncScroll(enPane,viPane,true);
       }
     });
@@ -204,6 +210,7 @@
         root.querySelectorAll('input[type=radio]').forEach(r=>{r.checked=r.value===value;});
       }
       clearSelection();
+      requestLayoutSync(); // Filtered rows have different heights; rebuild corresponding anchors.
     };
     for (const root of [enRoot,viRoot]) root.querySelectorAll('input[type=radio]').forEach(r=>r.addEventListener('change',()=>{if(r.checked)filter(r.value);}));
     filter('Modelling');
@@ -233,9 +240,18 @@
     if (!eg) {notify('Neo này không tồn tại trong nội dung gốc.');return;}
     scrollElement(enPane,eg,20);if(vg)scrollElement(viPane,vg,20);
   }
+  function setPaneScroll(pane,y) {
+    // Mark writes made by the synchronizer, so their scroll events never take
+    // control and start another round of updates in the opposite direction.
+    const max=Math.max(0,pane.scrollHeight-pane.clientHeight);
+    const target=Math.max(0,Math.min(max,Number.isFinite(y)?y:0));
+    if(Math.abs(pane.scrollTop-target)<0.4)return;
+    scrollWrites.set(pane,{top:target,until:performance.now()+450});
+    pane.scrollTop=target;
+  }
   function scrollElement(pane,el,padding=70) {
     const top=el.getBoundingClientRect().top-pane.getBoundingClientRect().top+pane.scrollTop-padding;
-    pane.scrollTop=Math.max(0,top);
+    setPaneScroll(pane,top);
   }
   function handleArticleLink(event) {
     const a=event.target.closest('a');if(!a)return;
@@ -361,32 +377,131 @@
     if(revealed.has(i))scrollElement(viPane,span,80);
   }
   function rememberPosition(){if(currentPage){state.positions[currentPage.path]=enPane.scrollTop;persist();}}
-  function syncScroll(source,target,force=false){
-    if(!state.sync||!currentPage||(!force&&performance.now()<syncUntil&&source===syncTarget))return;
-    const a=source===enPane?enGroups:viGroups,b=source===enPane?viGroups:enGroups;
-    const rect=source.getBoundingClientRect();let chosen=-1;
-    for(let i=0;i<a.length;i++){
-      const r=a[i].el.getBoundingClientRect();if(!r.height)continue;
-      if(r.top<=rect.top+45)chosen=i;else if(chosen<0){chosen=i;break;}else break;
+
+  // Stable, geometry-aware synchronization. Every point represents the TOP of
+  // the same semantic block in both languages, not a percentage of the page.
+  // Interpolation keeps movement continuous when paragraphs have unequal height.
+  function invalidateGeometry(){geometry=null;}
+  function landmarks(){
+    if(geometry)return geometry;
+    const enMax=Math.max(0,enPane.scrollHeight-enPane.clientHeight);
+    const viMax=Math.max(0,viPane.scrollHeight-viPane.clientHeight);
+    const er=enPane.getBoundingClientRect(),vr=viPane.getBoundingClientRect();
+    const pairs=[];
+    const add=(a,b,index)=>{
+      if(!a||!b||!a.getClientRects().length||!b.getClientRects().length)return;
+      const ar=a.getBoundingClientRect(),br=b.getBoundingClientRect();
+      if(ar.height<0.5||br.height<0.5)return;
+      const e=Math.max(0,Math.min(enMax,ar.top-er.top+enPane.scrollTop-SCROLL_INSET));
+      const v=Math.max(0,Math.min(viMax,br.top-vr.top+viPane.scrollTop-SCROLL_INSET));
+      if(e>0.5&&v>0.5&&e<enMax-0.5&&v<viMax-0.5)pairs.push({e,v,index});
+    };
+    for(let i=0;i<enGroups.length;i++){
+      const a=enGroups[i]?.el,b=viGroups[i]?.el;
+      // Table cells are not top-to-bottom in either language. Align by table
+      // row instead so a tall translated cell cannot reorder anchor points.
+      if(!a||a.closest('tr'))continue;
+      add(a,b,i);
     }
-    if(chosen<0||!b[chosen])return;
-    const ae=a[chosen].el,be=b[chosen].el;
-    const ar=ae.getBoundingClientRect(),br=be.getBoundingClientRect(),tr=target.getBoundingClientRect();
-    const ratio=Math.min(1,Math.max(0,(rect.top+35-ar.top)/Math.max(1,ar.height)));
-    let next=target.scrollTop+br.top-tr.top+ratio*br.height-35;
-    if(source.scrollTop<2)next=0;
-    // The English pane has a final "mark read" control; don't turn that into a forced jump.
-    syncTarget=target;syncUntil=performance.now()+120;
-    target.scrollTop=Math.max(0,next);
+    const rowsEN=enRoot.querySelectorAll('tr'),rowsVI=viRoot.querySelectorAll('tr');
+    if(rowsEN.length===rowsVI.length){
+      rowsEN.forEach((row,i)=>add(row,rowsVI[i],enGroups.length+i));
+    }
+    pairs.sort((a,b)=>a.e-b.e||a.index-b.index);
+    const points=[{e:0,v:0}];
+    // Keep the mapping strictly increasing in BOTH columns. Invalid geometry
+    // (overlapping/nested blocks, hidden rows) must not create backward jumps.
+    for(const p of pairs){
+      const prev=points[points.length-1];
+      if(p.e-prev.e>1.5&&p.v-prev.v>1.5)points.push({e:p.e,v:p.v});
+    }
+    if(enMax>0&&viMax>0){
+      // Reserve the true end of both scroll ranges, including any footer.
+      // It prevents one column stopping short when the other reaches the end.
+      while(points.length>1&&(points[points.length-1].e>=enMax-0.5||points[points.length-1].v>=viMax-0.5))points.pop();
+      points.push({e:enMax,v:viMax});
+    }
+    geometry={points,enMax,viMax};
+    return geometry;
   }
-  function onScroll(source,target){
+  function mappedScroll(source){
+    const g=landmarks(),points=g.points;
+    if(points.length<2)return 0;
+    const from=source===enPane?'e':'v',to=source===enPane?'v':'e';
+    const max=source===enPane?g.enMax:g.viMax;
+    const y=Math.min(max,Math.max(0,source.scrollTop));
+    if(y<=0)return 0;
+    if(y>=max)return points[points.length-1][to];
+    let low=0,high=points.length-1;
+    while(high-low>1){const mid=(low+high)>>1;if(points[mid][from]<=y)low=mid;else high=mid;}
+    const a=points[low],b=points[high];
+    const ratio=(y-a[from])/Math.max(1e-6,b[from]-a[from]);
+    return a[to]+ratio*(b[to]-a[to]);
+  }
+  function syncScroll(source,target,force=false){
+    if(!state.sync||!currentPage)return;
+    if(!force&&scrollLeader!==source)return;
+    setPaneScroll(target,mappedScroll(source));
+    if(source===viPane)rememberPosition();
+  }
+  function scheduleSync(source){
+    if(!state.sync||!currentPage)return;
+    pendingSource=source;
+    if(syncFrame)return;
+    syncFrame=requestAnimationFrame(()=>{
+      syncFrame=0;
+      const leader=pendingSource;pendingSource=null;
+      if(leader&&state.sync)syncScroll(leader,leader===enPane?viPane:enPane,true);
+      if(!hasHighlights)paintActive();
+    });
+  }
+  function onScroll(source){
     if(source===enPane)rememberPosition();
-    if(syncFrame)cancelAnimationFrame(syncFrame);
-    syncFrame=requestAnimationFrame(()=>{syncFrame=0;syncScroll(source,target);if(!hasHighlights)paintActive();});
+    const write=scrollWrites.get(source);
+    if(write){
+      scrollWrites.delete(source);
+      if(performance.now()<=write.until&&Math.abs(source.scrollTop-write.top)<2)return;
+    }
+    // A genuine (wheel, touch, scrollbar, keyboard or external) scroll owns
+    // synchronization until the user actively scrolls the other column.
+    scrollLeader=source;
+    scheduleSync(source);
+    if(!hasHighlights&&!state.sync)requestAnimationFrame(paintActive);
   }
-  enPane.addEventListener('scroll',()=>onScroll(enPane,viPane),{passive:true});
-  viPane.addEventListener('scroll',()=>onScroll(viPane,enPane),{passive:true});
-  window.addEventListener('resize',()=>{if(!hasHighlights)paintActive();});
+  function takeScrollLead(source){
+    scrollLeader=source;
+    scrollWrites.delete(source);
+    if(syncFrame){cancelAnimationFrame(syncFrame);syncFrame=0;}
+    pendingSource=null;
+  }
+  for(const pane of [enPane,viPane]){
+    pane.addEventListener('wheel',()=>takeScrollLead(pane),{passive:true});
+    pane.addEventListener('touchstart',()=>takeScrollLead(pane),{passive:true});
+    pane.addEventListener('pointerdown',()=>takeScrollLead(pane),{passive:true});
+    pane.addEventListener('keydown',e=>{
+      if(['ArrowDown','ArrowUp','PageDown','PageUp','Home','End',' '].includes(e.key))takeScrollLead(pane);
+    });
+    pane.addEventListener('scroll',()=>onScroll(pane),{passive:true});
+  }
+  function requestLayoutSync(){
+    invalidateGeometry();
+    if(layoutFrame)cancelAnimationFrame(layoutFrame);
+    layoutFrame=requestAnimationFrame(()=>{
+      layoutFrame=0;
+      if(!currentPage)return;
+      if(state.sync){const source=scrollLeader===viPane?viPane:enPane;syncScroll(source,source===enPane?viPane:enPane,true);}
+      if(!hasHighlights)paintActive();
+    });
+  }
+  // Re-measure when images finish loading, fonts reflow, the viewport changes,
+  // or filters change a document's height. No polling and no forced scroll on hover.
+  if('ResizeObserver'in window){
+    const observer=new ResizeObserver(()=>requestLayoutSync());
+    [enRoot,viRoot,enPane,viPane].forEach(el=>observer.observe(el));
+  }
+  enRoot.addEventListener('load',requestLayoutSync,true);
+  viRoot.addEventListener('load',requestLayoutSync,true);
+  window.addEventListener('resize',requestLayoutSync);
 
   const navGroups=[
     ['BẮT ĐẦU',['index.html','introduction.html','history.html']],
@@ -507,9 +622,9 @@
   }
 
   document.querySelectorAll('.mode-control button').forEach(b=>b.addEventListener('click',()=>setMode(b.dataset.mode)));
-  $('rr-sync').checked=state.sync;$('rr-sync').addEventListener('change',e=>{state.sync=e.target.checked;if(state.sync)syncScroll(enPane,viPane,true);persist();});
+  $('rr-sync').checked=state.sync;$('rr-sync').addEventListener('change',e=>{state.sync=e.target.checked;if(state.sync){scrollLeader=enPane;invalidateGeometry();syncScroll(enPane,viPane,true);}persist();});
   document.documentElement.style.setProperty('--read-size',state.font+'px');
-  function changeFont(n){state.font=Math.max(13,Math.min(22,state.font+n));document.documentElement.style.setProperty('--read-size',state.font+'px');persist();if(!hasHighlights)requestAnimationFrame(paintActive);}
+  function changeFont(n){state.font=Math.max(13,Math.min(22,state.font+n));document.documentElement.style.setProperty('--read-size',state.font+'px');requestLayoutSync();persist();}
   $('rr-font-less').addEventListener('click',()=>changeFont(-1));$('rr-font-more').addEventListener('click',()=>changeFont(1));
   $('rr-reset-reveals').addEventListener('click',()=>{revealed.clear();viGroups.forEach(g=>g.span.classList.remove('is-revealed'));document.body.classList.remove('challenge-revealed');setMode(state.mode,false);});
   $('rr-back-practice').addEventListener('click',()=>setMode('practice'));
@@ -544,7 +659,7 @@
     if((e.key==='ArrowDown'||e.key==='ArrowUp')&&e.shiftKey&&enGroups.length){
       e.preventDefault();const d=e.key==='ArrowDown'?1:-1;
       const i=Math.max(0,Math.min(enGroups.length-1,(active?.group.index??-1)+d));
-      pinned=false;activate({group:enGroups[i],pair:null,key:i+':paragraph'},true);pinned=true;updateSelection();scrollElement(enPane,enGroups[i].el,80);
+      pinned=false;activate({group:enGroups[i],pair:null,key:i+':paragraph'},true);pinned=true;updateSelection();scrollLeader=enPane;scrollElement(enPane,enGroups[i].el,80);if(state.sync)syncScroll(enPane,viPane,true);
     }
   });
   // Route our own hash links explicitly; no dependency on the document's base URL.
