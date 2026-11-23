@@ -1,0 +1,645 @@
+{
+  "environment": {
+    "browser": "Chromium 144.0.7559.96",
+    "method": "in-memory document with real application scripts; external requests blocked",
+    "storage": "test fixture except blocked-storage case",
+    "notValidated": [
+      "Actual file:// navigation",
+      "Live HTTP navigation",
+      "Real persistent storage on user browser",
+      "Installed English TTS voice audio"
+    ]
+  },
+  "passed": 57,
+  "failed": 0,
+  "checks": [
+    {
+      "name": "Render and source DOM: abstractions/code.html",
+      "passed": true,
+      "detail": {
+        "page": "abstractions/code.html",
+        "units": 2,
+        "expected": 2,
+        "phrasePairs": 8,
+        "errors": [],
+        "highlightAPI": true,
+        "mode": "practice",
+        "pinned": false,
+        "active": null,
+        "storageOK": true,
+        "words": 0
+      }
+    },
+    {
+      "name": "Render and source DOM: abstractions/component.html",
+      "passed": true,
+      "detail": {
+        "page": "abstractions/component.html",
+        "units": 24,
+        "expected": 24,
+        "phrasePairs": 93,
+        "errors": [],
+        "highlightAPI": true,
+        "mode": "practice",
+        "pinned": false,
+        "active": null,
+        "storageOK": true,
+        "words": 0
+      }
+    },
+    {
+      "name": "Render and source DOM: abstractions/container.html",
+      "passed": true,
+      "detail": {
+        "page": "abstractions/container.html",
+        "units": 26,
+        "expected": 26,
+        "phrasePairs": 64,
+        "errors": [],
+        "highlightAPI": true,
+        "mode": "practice",
+        "pinned": false,
+        "active": null,
+        "storageOK": true,
+        "words": 0
+      }
+    },
+    {
+      "name": "Render and source DOM: abstractions/faq.html",
+      "passed": true,
+      "detail": {
+        "page": "abstractions/faq.html",
+        "units": 17,
+        "expected": 17,
+        "phrasePairs": 38,
+        "errors": [],
+        "highlightAPI": true,
+        "mode": "practice",
+        "pinned": false,
+        "active": null,
+        "storageOK": true,
+        "words": 0
+      }
+    },
+    {
+      "name": "Render and source DOM: abstractions/index.html",
+      "passed": true,
+      "detail": {
+        "page": "abstractions/index.html",
+        "units": 4,
+        "expected": 4,
+        "phrasePairs": 17,
+        "errors": [],
+        "highlightAPI": true,
+        "mode": "practice",
+        "pinned": false,
+        "active": null,
+        "storageOK": true,
+        "words": 0
+      }
+    },
+    {
+      "name": "Render and source DOM: abstractions/microservices.html",
+      "passed": true,
+      "detail": {
+        "page": "abstractions/microservices.html",
+        "units": 30,
+        "expected": 30,
+        "phrasePairs": 67,
+        "errors": [],
+        "highlightAPI": true,
+        "mode": "practice",
+        "pinned": false,
+        "active": null,
+        "storageOK": true,
+        "words": 0
+      }
+    },
+    {
+      "name": "Render and source DOM: abstractions/queues-and-topics.html",
+      "passed": true,
+      "detail": {
+        "page": "abstractions/queues-and-topics.html",
+        "units": 20,
+        "expected": 20,
+        "phrasePairs": 43,
+        "errors": [],
+        "highlightAPI": true,
+        "mode": "practice",
+        "pinned": false,
+        "active": null,
+        "storageOK": true,
+        "words": 0
+      }
+    },
+    {
+      "name": "Render and source DOM: abstractions/software-system.html",
+      "passed": true,
+      "detail": {
+        "page": "abstractions/software-system.html",
+        "units": 4,
+        "expected": 4,
+        "phrasePairs": 14,
+        "errors": [],
+        "highlightAPI": true,
+        "mode": "practice",
+        "pinned": false,
+        "active": null,
+        "storageOK": true,
+        "words": 0
+      }
+    },
+    {
+      "name": "Render and source DOM: diagrams/checklist.html",
+      "passed": true,
+      "detail": {
+        "page": "diagrams/checklist.html",
+        "units": 67,
+        "expected": 67,
+        "phrasePairs": 22,
+        "errors": [],
+        "highlightAPI": true,
+        "mode": "practice",
+        "pinned": false,
+        "active": null,
+        "storageOK": true,
+        "words": 0
+      }
+    },
+    {
+      "name": "Render and source DOM: diagrams/code.html",
+      "passed": true,
+      "detail": {
+        "page": "diagrams/code.html",
+        "units": 12,
+        "expected": 12,
+        "phrasePairs": 25,
+        "errors": [],
+        "highlightAPI": true,
+        "mode": "practice",
+        "pinned": false,
+        "active": null,
+        "storageOK": true,
+        "words": 0
+      }
+    },
+    {
+      "name": "Render and source DOM: diagrams/component.html",
+      "passed": true,
+      "detail": {
+        "page": "diagrams/component.html",
+        "units": 14,
+        "expected": 14,
+        "phrasePairs": 22,
+        "errors": [],
+        "highlightAPI": true,
+        "mode": "practice",
+        "pinned": false,
+        "active": null,
+        "storageOK": true,
+        "words": 0
+      }
+    },
+    {
+      "name": "Render and source DOM: diagrams/container.html",
+      "passed": true,
+      "detail": {
+        "page": "diagrams/container.html",
+        "units": 17,
+        "expected": 17,
+        "phrasePairs": 37,
+        "errors": [],
+        "highlightAPI": true,
+        "mode": "practice",
+        "pinned": false,
+        "active": null,
+        "storageOK": true,
+        "words": 0
+      }
+    },
+    {
+      "name": "Render and source DOM: diagrams/deployment.html",
+      "passed": true,
+      "detail": {
+        "page": "diagrams/deployment.html",
+        "units": 21,
+        "expected": 21,
+        "phrasePairs": 39,
+        "errors": [],
+        "highlightAPI": true,
+        "mode": "practice",
+        "pinned": false,
+        "active": null,
+        "storageOK": true,
+        "words": 0
+      }
+    },
+    {
+      "name": "Render and source DOM: diagrams/dynamic.html",
+      "passed": true,
+      "detail": {
+        "page": "diagrams/dynamic.html",
+        "units": 15,
+        "expected": 15,
+        "phrasePairs": 15,
+        "errors": [],
+        "highlightAPI": true,
+        "mode": "practice",
+        "pinned": false,
+        "active": null,
+        "storageOK": true,
+        "words": 0
+      }
+    },
+    {
+      "name": "Render and source DOM: diagrams/faq.html",
+      "passed": true,
+      "detail": {
+        "page": "diagrams/faq.html",
+        "units": 15,
+        "expected": 15,
+        "phrasePairs": 28,
+        "errors": [],
+        "highlightAPI": true,
+        "mode": "practice",
+        "pinned": false,
+        "active": null,
+        "storageOK": true,
+        "words": 0
+      }
+    },
+    {
+      "name": "Render and source DOM: diagrams/index.html",
+      "passed": true,
+      "detail": {
+        "page": "diagrams/index.html",
+        "units": 13,
+        "expected": 13,
+        "phrasePairs": 17,
+        "errors": [],
+        "highlightAPI": true,
+        "mode": "practice",
+        "pinned": false,
+        "active": null,
+        "storageOK": true,
+        "words": 0
+      }
+    },
+    {
+      "name": "Render and source DOM: diagrams/notation.html",
+      "passed": true,
+      "detail": {
+        "page": "diagrams/notation.html",
+        "units": 32,
+        "expected": 32,
+        "phrasePairs": 47,
+        "errors": [],
+        "highlightAPI": true,
+        "mode": "practice",
+        "pinned": false,
+        "active": null,
+        "storageOK": true,
+        "words": 0
+      }
+    },
+    {
+      "name": "Render and source DOM: diagrams/system-context.html",
+      "passed": true,
+      "detail": {
+        "page": "diagrams/system-context.html",
+        "units": 15,
+        "expected": 15,
+        "phrasePairs": 21,
+        "errors": [],
+        "highlightAPI": true,
+        "mode": "practice",
+        "pinned": false,
+        "active": null,
+        "storageOK": true,
+        "words": 0
+      }
+    },
+    {
+      "name": "Render and source DOM: diagrams/system-landscape.html",
+      "passed": true,
+      "detail": {
+        "page": "diagrams/system-landscape.html",
+        "units": 13,
+        "expected": 13,
+        "phrasePairs": 19,
+        "errors": [],
+        "highlightAPI": true,
+        "mode": "practice",
+        "pinned": false,
+        "active": null,
+        "storageOK": true,
+        "words": 0
+      }
+    },
+    {
+      "name": "Render and source DOM: faq.html",
+      "passed": true,
+      "detail": {
+        "page": "faq.html",
+        "units": 52,
+        "expected": 52,
+        "phrasePairs": 60,
+        "errors": [],
+        "highlightAPI": true,
+        "mode": "practice",
+        "pinned": false,
+        "active": null,
+        "storageOK": true,
+        "words": 0
+      }
+    },
+    {
+      "name": "Render and source DOM: history.html",
+      "passed": true,
+      "detail": {
+        "page": "history.html",
+        "units": 15,
+        "expected": 15,
+        "phrasePairs": 24,
+        "errors": [],
+        "highlightAPI": true,
+        "mode": "practice",
+        "pinned": false,
+        "active": null,
+        "storageOK": true,
+        "words": 0
+      }
+    },
+    {
+      "name": "Render and source DOM: index.html",
+      "passed": true,
+      "detail": {
+        "page": "index.html",
+        "units": 11,
+        "expected": 11,
+        "phrasePairs": 15,
+        "errors": [],
+        "highlightAPI": true,
+        "mode": "practice",
+        "pinned": false,
+        "active": null,
+        "storageOK": true,
+        "words": 0
+      }
+    },
+    {
+      "name": "Render and source DOM: introduction.html",
+      "passed": true,
+      "detail": {
+        "page": "introduction.html",
+        "units": 26,
+        "expected": 26,
+        "phrasePairs": 171,
+        "errors": [],
+        "highlightAPI": true,
+        "mode": "practice",
+        "pinned": false,
+        "active": null,
+        "storageOK": true,
+        "words": 0
+      }
+    },
+    {
+      "name": "Render and source DOM: tooling/index.html",
+      "passed": true,
+      "detail": {
+        "page": "tooling/index.html",
+        "units": 101,
+        "expected": 101,
+        "phrasePairs": 80,
+        "errors": [],
+        "highlightAPI": true,
+        "mode": "practice",
+        "pinned": false,
+        "active": null,
+        "storageOK": true,
+        "words": 0
+      }
+    },
+    {
+      "name": "No JavaScript exceptions on 24 pages",
+      "passed": true,
+      "detail": []
+    },
+    {
+      "name": "Hover locates authored phrase",
+      "passed": true
+    },
+    {
+      "name": "Vietnamese highlight matches intended phrase",
+      "passed": true,
+      "detail": {
+        "rr-english": [
+          "in the building industry"
+        ],
+        "rr-vietnamese": [
+          "trong ngành xây dựng"
+        ]
+      }
+    },
+    {
+      "name": "Hover does not resize or move dock",
+      "passed": true,
+      "detail": [
+        {
+          "x": 232,
+          "y": 910,
+          "width": 1268,
+          "height": 140
+        },
+        {
+          "x": 232,
+          "y": 910,
+          "width": 1268,
+          "height": 140
+        },
+        {
+          "x": 232,
+          "y": 910,
+          "width": 1268,
+          "height": 140
+        },
+        {
+          "x": 232,
+          "y": 910,
+          "width": 1268,
+          "height": 140
+        },
+        {
+          "x": 232,
+          "y": 910,
+          "width": 1268,
+          "height": 140
+        },
+        {
+          "x": 232,
+          "y": 910,
+          "width": 1268,
+          "height": 140
+        }
+      ]
+    },
+    {
+      "name": "Hover does not auto-scroll either pane",
+      "passed": true,
+      "detail": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "name": "Pinned phrase does not change on hover",
+      "passed": true
+    },
+    {
+      "name": "Escape clears pin and highlight",
+      "passed": true
+    },
+    {
+      "name": "Save context; duplicate ignored",
+      "passed": true
+    },
+    {
+      "name": "Challenge does not leak hover translation",
+      "passed": true
+    },
+    {
+      "name": "Explicit reveal displays target paragraph",
+      "passed": true
+    },
+    {
+      "name": "Reset hides revealed paragraphs",
+      "passed": true
+    },
+    {
+      "name": "Parallel mode selected",
+      "passed": true
+    },
+    {
+      "name": "English HTML unchanged by learning actions",
+      "passed": true
+    },
+    {
+      "name": "Keyboard paragraph selection works",
+      "passed": true
+    },
+    {
+      "name": "Scrolls independently when sync disabled",
+      "passed": true
+    },
+    {
+      "name": "Sync scroll maps blocks and settles",
+      "passed": true,
+      "detail": {
+        "after": [
+          500,
+          529
+        ],
+        "settled": [
+          500,
+          529
+        ]
+      }
+    },
+    {
+      "name": "Notebook includes saved original context",
+      "passed": true
+    },
+    {
+      "name": "Review starts with answer hidden",
+      "passed": true
+    },
+    {
+      "name": "Review reveals answer on request",
+      "passed": true
+    },
+    {
+      "name": "Contextual glossary filters",
+      "passed": true
+    },
+    {
+      "name": "Export contains original context and review status",
+      "passed": true
+    },
+    {
+      "name": "Import skips duplicate vocabulary",
+      "passed": true
+    },
+    {
+      "name": "Import rejects unknown source page",
+      "passed": true
+    },
+    {
+      "name": "Imported text is not executable markup",
+      "passed": true
+    },
+    {
+      "name": "Serialized state restores (storage fixture)",
+      "passed": true
+    },
+    {
+      "name": "Sidebar navigates internally",
+      "passed": true
+    },
+    {
+      "name": "Original Tooling filter kept and synced",
+      "passed": true,
+      "detail": {
+        "Modelling": 14,
+        "Diagramming": 13
+      }
+    },
+    {
+      "name": "Mobile viewport does not overflow page",
+      "passed": true
+    },
+    {
+      "name": "Mobile navigation opens",
+      "passed": true
+    },
+    {
+      "name": "Mobile navigation closes",
+      "passed": true
+    },
+    {
+      "name": "Old-browser fallback highlights without wrapping English",
+      "passed": true
+    },
+    {
+      "name": "Blocked storage still permits reading",
+      "passed": true
+    },
+    {
+      "name": "No JavaScript exceptions during interactions",
+      "passed": true,
+      "detail": []
+    }
+  ]
+}
